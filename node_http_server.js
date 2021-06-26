@@ -19,6 +19,8 @@ const HTTPS_PORT = 443;
 const HTTP_MEDIAROOT = './media';
 const Logger = require('./node_core_logger');
 const context = require('./node_core_ctx');
+const NodeCoreUtils = require("./node_core_utils");
+const url = require('url');
 
 const streamsRoute = require('./api/routes/streams');
 const serverRoute = require('./api/routes/server');
@@ -54,6 +56,36 @@ class NodeHttpServer {
         res.sendFile(adminEntry);
       });
     }
+    
+// try with auth	
+//    let mediaSend = ('/home/ubuntu/rtmp-server/media/live/pratik/2021-06-26-11-57-03.mp4');
+//    app.get('/media/*/*.mp4', (req, res, next) => {
+//		if (this.config.auth !== undefined && this.config.auth.play) {
+//		if (!req.url.startsWith('/media/*/*.mp4')) {
+//          const results = NodeCoreUtils.verifyAuth(req.query.sign, this.config.auth.secret);
+//          if (!results) {
+//            Logger.log(`[http-static play] Unauthorized. streamPath=${req.path} sign=${req.query.sign}`);
+//            res.statusCode = 403;
+//            res.end();
+//            return;
+//          }
+//        }
+//		else { res.sendFile(mediaSend); }  
+//		 }		
+ //         });
+ 
+
+
+   
+	
+    app.get('/*/*.mp4', (req, res, next) => {
+		  const queryObject = url.parse(req.url,true).pathname;
+		  let mediaSend = ('/home/ubuntu/rtmp-server'+queryObject);
+		  Logger.log(mediaSend);
+          res.sendFile(mediaSend);
+		 		
+    });
+
 
     if (this.config.http.api !== false) {
       if (this.config.auth && this.config.auth.api) {
